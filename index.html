@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Adventure</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 2D World Map -->
+    <div id="world-map" class="screen active">
+        <div class="world-header">
+            <h1>🎮 GAME WORLD 🎮</h1>
+            <div class="balance-display">
+                <span>Balance: $<span id="balance">1000</span></span>
+            </div>
+        </div>
+
+        <div class="world-container">
+            <!-- World Background -->
+            <div class="world-background">
+                <div class="world-grid"></div>
+            </div>
+
+            <!-- Game Locations -->
+            <div class="game-locations">
+                <div class="game-location" data-game="slots" style="left: 10%; top: 15%;">
+                    <div class="location-icon">🎰</div>
+                    <div class="location-label">Slot Machine</div>
+                    <div class="location-glow"></div>
+                </div>
+                
+                <div class="game-location" data-game="blackjack" style="left: 40%; top: 15%;">
+                    <div class="location-icon">🃏</div>
+                    <div class="location-label">Blackjack</div>
+                    <div class="location-glow"></div>
+                </div>
+                
+                <div class="game-location" data-game="roulette" style="left: 70%; top: 15%;">
+                    <div class="location-icon">🎲</div>
+                    <div class="location-label">Roulette</div>
+                    <div class="location-glow"></div>
+                </div>
+                
+                <div class="game-location" data-game="uno" style="left: 25%; top: 70%;">
+                    <div class="location-icon">🎴</div>
+                    <div class="location-label">Uno</div>
+                    <div class="location-glow"></div>
+                </div>
+            </div>
+
+            <!-- Character Sprite -->
+            <div class="character-sprite" id="character">
+                <div class="character-body">
+                    <div class="character-head">👤</div>
+                    <div class="character-torso">👔</div>
+                    <div class="character-legs">👖</div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <p>Use <strong>W A S D</strong> keys to move your character</p>
+                <div class="controls">Walk to a game location and press <strong>E</strong> to play!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slot Machine Game -->
+    <div id="slots-game" class="screen">
+        <button class="back-button" onclick="gameManager.returnToWorld()">← Back to World</button>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>🎰 Slot Machine 🎰</h1>
+                <div class="balance-display">
+                    <span>Balance: $<span id="balance-slots">1000</span></span>
+                </div>
+            </div>
+
+            <div class="slot-machine">
+                <div class="reels-container">
+                    <div class="reel" id="reel1">
+                        <div class="symbol">🍒</div>
+                    </div>
+                    <div class="reel" id="reel2">
+                        <div class="symbol">🍋</div>
+                    </div>
+                    <div class="reel" id="reel3">
+                        <div class="symbol">🍊</div>
+                    </div>
+                </div>
+
+                <div class="betting-section">
+                    <div class="bet-controls">
+                        <label>Bet Amount: $<span id="current-bet">10</span></label>
+                        <div class="bet-buttons">
+                            <button class="bet-btn" data-bet="5">$5</button>
+                            <button class="bet-btn" data-bet="10">$10</button>
+                            <button class="bet-btn" data-bet="25">$25</button>
+                            <button class="bet-btn" data-bet="50">$50</button>
+                            <button class="bet-btn" data-bet="100">$100</button>
+                        </div>
+                    </div>
+                    
+                    <button id="spin-btn" class="spin-button">SPIN</button>
+                    
+                    <div class="win-display">
+                        <div id="win-message"></div>
+                        <div id="payout-amount"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paytable">
+                <h3>Paytable</h3>
+                <div class="paytable-content">
+                    <div class="paytable-item">💎💎💎 = 100x</div>
+                    <div class="paytable-item">⭐⭐⭐ = 50x</div>
+                    <div class="paytable-item">🔔🔔🔔 = 25x</div>
+                    <div class="paytable-item">🍇🍇🍇 = 10x</div>
+                    <div class="paytable-item">🍊🍊🍊 = 5x</div>
+                    <div class="paytable-item">🍋🍋🍋 = 3x</div>
+                    <div class="paytable-item">🍒🍒🍒 = 2x</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blackjack Game -->
+    <div id="blackjack-game" class="screen">
+        <button class="back-button" onclick="gameManager.returnToWorld()">← Back to World</button>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>🃏 Blackjack 🃏</h1>
+                <div class="balance-display">
+                    <span>Balance: $<span id="balance-blackjack">1000</span></span>
+                </div>
+            </div>
+
+            <div class="blackjack-table">
+                <div class="dealer-area">
+                    <h3>Dealer</h3>
+                    <div class="cards" id="dealer-cards"></div>
+                    <div class="score" id="dealer-score">Score: 0</div>
+                </div>
+
+                <div class="player-area">
+                    <h3>You</h3>
+                    <div class="cards" id="player-cards"></div>
+                    <div class="score" id="player-score">Score: 0</div>
+                </div>
+
+                <div class="blackjack-controls">
+                    <div class="bet-controls">
+                        <label>Bet Amount: $<span id="current-bet-bj">10</span></label>
+                        <div class="bet-buttons">
+                            <button class="bet-btn" data-bet="5">$5</button>
+                            <button class="bet-btn" data-bet="10">$10</button>
+                            <button class="bet-btn" data-bet="25">$25</button>
+                            <button class="bet-btn" data-bet="50">$50</button>
+                        </div>
+                    </div>
+
+                    <div class="game-message" id="bj-message"></div>
+
+                    <div class="game-buttons">
+                        <button id="deal-btn" class="game-btn">Deal</button>
+                        <button id="hit-btn" class="game-btn" disabled>Hit</button>
+                        <button id="stand-btn" class="game-btn" disabled>Stand</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roulette Game -->
+    <div id="roulette-game" class="screen">
+        <button class="back-button" onclick="gameManager.returnToWorld()">← Back to World</button>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>🎲 Roulette 🎲</h1>
+                <div class="balance-display">
+                    <span>Balance: $<span id="balance-roulette">1000</span></span>
+                </div>
+            </div>
+
+            <div class="roulette-table">
+                <div class="roulette-wheel" id="roulette-wheel">
+                    <div class="wheel-center">
+                        <div class="ball" id="roulette-ball"></div>
+                    </div>
+                    <div class="wheel-numbers">
+                        <span class="wheel-number red">0</span>
+                        <span class="wheel-number black">32</span>
+                        <span class="wheel-number red">15</span>
+                        <span class="wheel-number black">19</span>
+                        <span class="wheel-number red">4</span>
+                        <span class="wheel-number black">21</span>
+                        <span class="wheel-number red">2</span>
+                        <span class="wheel-number black">25</span>
+                        <span class="wheel-number red">17</span>
+                        <span class="wheel-number black">34</span>
+                        <span class="wheel-number red">6</span>
+                        <span class="wheel-number black">27</span>
+                        <span class="wheel-number red">13</span>
+                        <span class="wheel-number black">36</span>
+                        <span class="wheel-number red">11</span>
+                        <span class="wheel-number black">30</span>
+                        <span class="wheel-number red">8</span>
+                        <span class="wheel-number black">23</span>
+                        <span class="wheel-number red">10</span>
+                        <span class="wheel-number black">5</span>
+                        <span class="wheel-number red">24</span>
+                        <span class="wheel-number black">16</span>
+                        <span class="wheel-number red">33</span>
+                        <span class="wheel-number black">1</span>
+                        <span class="wheel-number red">20</span>
+                        <span class="wheel-number black">14</span>
+                        <span class="wheel-number red">31</span>
+                        <span class="wheel-number black">9</span>
+                        <span class="wheel-number red">22</span>
+                        <span class="wheel-number black">18</span>
+                        <span class="wheel-number red">29</span>
+                        <span class="wheel-number black">7</span>
+                        <span class="wheel-number red">28</span>
+                        <span class="wheel-number black">12</span>
+                        <span class="wheel-number red">35</span>
+                        <span class="wheel-number black">3</span>
+                        <span class="wheel-number red">26</span>
+                    </div>
+                </div>
+
+                <div class="roulette-betting">
+                    <div class="bet-controls">
+                        <label>Bet Amount: $<span id="current-bet-roulette">10</span></label>
+                        <div class="bet-buttons">
+                            <button class="bet-btn" data-bet="5">$5</button>
+                            <button class="bet-btn" data-bet="10">$10</button>
+                            <button class="bet-btn" data-bet="25">$25</button>
+                            <button class="bet-btn" data-bet="50">$50</button>
+                        </div>
+                    </div>
+
+                    <div class="bet-options">
+                        <div class="bet-option-group">
+                            <h4>Red/Black</h4>
+                            <button class="bet-option red-bet" data-bet="red">Red (2x)</button>
+                            <button class="bet-option black-bet" data-bet="black">Black (2x)</button>
+                        </div>
+                        <div class="bet-option-group">
+                            <h4>Numbers</h4>
+                            <button class="bet-option number-bet" data-bet="0">0 (35x)</button>
+                            <button class="bet-option number-bet" data-bet="1-18">1-18 (2x)</button>
+                            <button class="bet-option number-bet" data-bet="19-36">19-36 (2x)</button>
+                        </div>
+                    </div>
+
+                    <button id="spin-roulette-btn" class="spin-button">SPIN</button>
+
+                    <div class="win-display">
+                        <div id="roulette-message"></div>
+                        <div id="roulette-result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uno Game -->
+    <div id="uno-game" class="screen">
+        <button class="back-button" onclick="gameManager.returnToWorld()">← Back to World</button>
+        <div class="game-container">
+            <div class="game-header">
+                <h1>🃏 Uno 🃏</h1>
+                <div class="balance-display">
+                    <span>Balance: $<span id="balance-uno">1000</span></span>
+                </div>
+            </div>
+
+            <div class="uno-table">
+                <div class="uno-top-section">
+                    <div class="opponent-area">
+                        <h3>Opponent</h3>
+                        <div class="opponent-hand" id="opponent-hand">
+                            <div class="card-count">Cards: <span id="opponent-count">7</span></div>
+                        </div>
+                    </div>
+
+                    <div class="discard-pile-area">
+                        <h3>Discard Pile</h3>
+                        <div class="discard-pile" id="discard-pile"></div>
+                        <div class="current-color" id="current-color"></div>
+                    </div>
+                </div>
+
+                <div class="uno-middle-section">
+                    <div class="draw-pile-area">
+                        <h3>Draw Pile</h3>
+                        <div class="draw-pile" id="draw-pile">
+                            <div class="card-back">🂠</div>
+                        </div>
+                    </div>
+
+                    <div class="uno-controls">
+                        <button id="draw-card-btn" class="game-btn">Draw Card</button>
+                        <div class="game-message" id="uno-message"></div>
+                        <div class="color-selector" id="color-selector" style="display: none;">
+                            <h4>Choose Color:</h4>
+                            <button class="color-btn red" data-color="red">🔴</button>
+                            <button class="color-btn blue" data-color="blue">🔵</button>
+                            <button class="color-btn green" data-color="green">🟢</button>
+                            <button class="color-btn yellow" data-color="yellow">🟡</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="player-area">
+                    <h3>Your Hand</h3>
+                    <div class="player-hand" id="player-hand"></div>
+                    <div class="hand-count">Cards: <span id="player-count">7</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="gameManager.js"></script>
+    <script src="characterController.js"></script>
+    <script src="slots.js"></script>
+    <script src="blackjack.js"></script>
+    <script src="roulette.js"></script>
+    <script src="uno.js"></script>
+</body>
+</html>
