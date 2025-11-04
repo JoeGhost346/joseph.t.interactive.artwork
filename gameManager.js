@@ -56,6 +56,9 @@ const gameManager = {
     },
     
     switchToGame(gameName) {
+        // Stop auto-play on all games
+        this.stopAllAutoPlay();
+        
         // Hide all screens
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
@@ -73,6 +76,14 @@ const gameManager = {
                 window[gameName + 'Game'].init();
             }
         }
+    },
+    
+    stopAllAutoPlay() {
+        // Stop auto-play on all games
+        if (slotsGame && slotsGame.stopAutoPlay) slotsGame.stopAutoPlay();
+        if (blackjackGame && blackjackGame.stopAutoPlay) blackjackGame.stopAutoPlay();
+        if (rouletteGame && rouletteGame.stopAutoPlay) rouletteGame.stopAutoPlay();
+        if (unoGame && unoGame.stopAutoPlay) unoGame.stopAutoPlay();
     },
     
     returnToWorld() {

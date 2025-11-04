@@ -298,6 +298,16 @@ body {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
+/* Make character full color blue */
+.character-head,
+.character-torso,
+.character-legs {
+    filter: hue-rotate(200deg) saturate(2.5) brightness(1.1);
+    background: rgba(52, 152, 219, 0.3);
+    border-radius: 50%;
+    padding: 5px;
+}
+
 .character-head {
     font-size: 40px;
     line-height: 1;

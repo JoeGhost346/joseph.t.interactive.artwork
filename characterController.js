@@ -95,11 +95,12 @@ const characterController = {
                 const oldY = this.position.y;
                 
                 if (this.isMoving) {
-                    // Move based on keys
-                    if (this.keys.w) this.position.y = Math.max(10, this.position.y - this.speed);
-                    if (this.keys.s) this.position.y = Math.min(90, this.position.y + this.speed);
-                    if (this.keys.a) this.position.x = Math.max(5, this.position.x - this.speed);
-                    if (this.keys.d) this.position.x = Math.min(95, this.position.x + this.speed);
+                    // Move based on keys - W goes down (increase Y), S goes up (decrease Y)
+                    // Using bottom positioning: lower Y = higher on screen, higher Y = lower on screen
+                    if (this.keys.w) this.position.y = Math.min(90, this.position.y + this.speed); // W = down (increase bottom%)
+                    if (this.keys.s) this.position.y = Math.max(10, this.position.y - this.speed); // S = up (decrease bottom%)
+                    if (this.keys.a) this.position.x = Math.max(5, this.position.x - this.speed);   // A = left
+                    if (this.keys.d) this.position.x = Math.min(95, this.position.x + this.speed);  // D = right
                     
                     // Add walking animation
                     if (this.character) {

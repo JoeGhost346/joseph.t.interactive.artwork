@@ -8,10 +8,62 @@ const blackjackGame = {
     dealerScore: 0,
     gameState: 'betting', // betting, playing, dealer, finished
     
+    autoPlay: false,
+    autoPlayInterval: null,
+    
     init() {
         this.resetGame();
         this.setupBetButtons();
         this.setupGameButtons();
+        this.startAutoPlay();
+    },
+    
+    startAutoPlay() {
+        this.autoPlay = true;
+        this.autoPlayLoop();
+    },
+    
+    stopAutoPlay() {
+        this.autoPlay = false;
+        if (this.autoPlayInterval) {
+            clearTimeout(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    },
+    
+    async autoPlayLoop() {
+        if (!this.autoPlay || gameManager.currentGame !== 'blackjack') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        if (gameManager.currentGame !== 'blackjack') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        if (this.gameState === 'betting') {
+            if (this.currentBet <= gameManager.getBalance()) {
+                this.deal();
+            }
+        } else if (this.gameState === 'playing') {
+            // Auto decision: hit if score < 17, stand if >= 17
+            if (this.playerScore < 17) {
+                this.hit();
+            } else {
+                this.stand();
+            }
+        } else if (this.gameState === 'finished') {
+            // Reset and play again after a delay
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            this.resetGame();
+        }
+        
+        if (this.autoPlay && gameManager.currentGame === 'blackjack') {
+            this.autoPlayInterval = setTimeout(() => this.autoPlayLoop(), 1500);
+        }
     },
     
     resetGame() {

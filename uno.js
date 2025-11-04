@@ -14,10 +14,78 @@ const unoGame = {
     values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'skip', 'reverse', 'draw2'],
     specialCards: ['wild', 'wild4'],
     
+    autoPlay: false,
+    autoPlayInterval: null,
+    
     init() {
         this.setupGame();
         this.setupButtons();
         this.updateDisplay();
+        this.startAutoPlay();
+    },
+    
+    startAutoPlay() {
+        this.autoPlay = true;
+        this.autoPlayLoop();
+    },
+    
+    stopAutoPlay() {
+        this.autoPlay = false;
+        if (this.autoPlayInterval) {
+            clearTimeout(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    },
+    
+    async autoPlayLoop() {
+        if (!this.autoPlay || gameManager.currentGame !== 'uno') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        if (gameManager.currentGame !== 'uno') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        // Check if color selector is showing (for wild cards)
+        const colorSelector = document.getElementById('color-selector');
+        if (colorSelector && colorSelector.style.display !== 'none') {
+            // Auto-select a random color for wild cards
+            const colorBtns = document.querySelectorAll('.color-btn');
+            if (colorBtns.length > 0) {
+                const randomColor = colorBtns[Math.floor(Math.random() * colorBtns.length)];
+                randomColor.click();
+            }
+            return;
+        }
+        
+        if (this.gameState === 'playing' && this.playerTurn) {
+            // Find first playable card
+            let playableIndex = -1;
+            for (let i = 0; i < this.playerHand.length; i++) {
+                if (this.canPlayCard(this.playerHand[i])) {
+                    playableIndex = i;
+                    break;
+                }
+            }
+            
+            if (playableIndex >= 0) {
+                // Play the card
+                this.playCard(playableIndex);
+            } else {
+                // Draw a card
+                this.drawCard();
+            }
+        }
+        
+        if (this.autoPlay && gameManager.currentGame === 'uno' && this.gameState !== 'gameOver') {
+            this.autoPlayInterval = setTimeout(() => this.autoPlayLoop(), 2500);
+        } else {
+            this.stopAutoPlay();
+        }
     },
     
     setupGame() {

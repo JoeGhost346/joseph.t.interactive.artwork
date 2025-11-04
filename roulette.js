@@ -19,11 +19,67 @@ const rouletteGame = {
         { num: 35, color: 'black' }, { num: 3, color: 'red' }, { num: 26, color: 'black' }
     ],
     
+    autoPlay: false,
+    autoPlayInterval: null,
+    
     init() {
         this.updateBetDisplay();
         this.setupBetButtons();
         this.setupBetOptions();
         this.setupSpinButton();
+        this.startAutoPlay();
+    },
+    
+    startAutoPlay() {
+        this.autoPlay = true;
+        this.autoPlayLoop();
+    },
+    
+    stopAutoPlay() {
+        this.autoPlay = false;
+        if (this.autoPlayInterval) {
+            clearTimeout(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    },
+    
+    async autoPlayLoop() {
+        if (!this.autoPlay || gameManager.currentGame !== 'roulette') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        if (gameManager.currentGame !== 'roulette') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        // Auto-select a random bet if none selected
+        if (!this.selectedBet) {
+            const betOptions = document.querySelectorAll('#roulette-game .bet-option');
+            if (betOptions.length > 0) {
+                const randomOption = betOptions[Math.floor(Math.random() * betOptions.length)];
+                randomOption.click();
+            }
+        }
+        
+        // Spin if we have a bet selected and balance
+        if (this.selectedBet && this.currentBet <= gameManager.getBalance() && !this.isSpinning) {
+            await this.spin();
+            // Clear selection after spin completes
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const betOptions = document.querySelectorAll('#roulette-game .bet-option');
+            betOptions.forEach(opt => opt.classList.remove('selected'));
+            this.selectedBet = null;
+        }
+        
+        if (this.autoPlay && gameManager.currentGame === 'roulette' && gameManager.getBalance() >= this.currentBet) {
+            this.autoPlayInterval = setTimeout(() => this.autoPlayLoop(), 3000);
+        } else {
+            this.stopAutoPlay();
+        }
     },
     
     setupBetButtons() {

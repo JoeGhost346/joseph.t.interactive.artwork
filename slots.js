@@ -13,11 +13,50 @@ const slotsGame = {
         '🍒🍒🍒': 2
     },
     
+    autoPlay: false,
+    autoPlayInterval: null,
+    
     init() {
         this.updateBetDisplay();
         this.setupBetButtons();
         this.setupSpinButton();
         this.initializeReels();
+        this.startAutoPlay();
+    },
+    
+    startAutoPlay() {
+        this.autoPlay = true;
+        this.autoPlayLoop();
+    },
+    
+    stopAutoPlay() {
+        this.autoPlay = false;
+        if (this.autoPlayInterval) {
+            clearTimeout(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    },
+    
+    async autoPlayLoop() {
+        if (!this.autoPlay || gameManager.currentGame !== 'slots') {
+            this.stopAutoPlay();
+            return;
+        }
+        
+        // Wait a bit before starting
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Check if we can play
+        if (this.currentBet <= gameManager.getBalance() && !this.isSpinning && gameManager.currentGame === 'slots') {
+            await this.spin();
+        }
+        
+        // Continue auto-play loop if still in game and have balance
+        if (this.autoPlay && gameManager.currentGame === 'slots' && gameManager.getBalance() >= this.currentBet) {
+            this.autoPlayInterval = setTimeout(() => this.autoPlayLoop(), 2500);
+        } else {
+            this.stopAutoPlay();
+        }
     },
     
     setupBetButtons() {
