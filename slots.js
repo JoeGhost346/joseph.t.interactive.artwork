@@ -20,8 +20,27 @@ const slotsGame = {
         this.updateBetDisplay();
         this.setupBetButtons();
         this.setupSpinButton();
+        this.setupAutoPlayToggle();
         this.initializeReels();
         this.startAutoPlay();
+    },
+    
+    setupAutoPlayToggle() {
+        const toggle = document.getElementById('auto-play-toggle-slots');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                if (this.autoPlay) {
+                    this.stopAutoPlay();
+                    toggle.textContent = 'Auto-Play: OFF';
+                    toggle.classList.remove('active');
+                } else {
+                    this.startAutoPlay();
+                    toggle.textContent = 'Auto-Play: ON';
+                    toggle.classList.add('active');
+                }
+            });
+            toggle.classList.add('active');
+        }
     },
     
     startAutoPlay() {
@@ -43,11 +62,11 @@ const slotsGame = {
             return;
         }
         
-        // Wait a bit before starting
+        // Wait a bit before starting (only if auto-play is on)
         await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // Check if we can play
-        if (this.currentBet <= gameManager.getBalance() && !this.isSpinning && gameManager.currentGame === 'slots') {
+        // Check if we can play (only if still in auto-play mode)
+        if (this.autoPlay && this.currentBet <= gameManager.getBalance() && !this.isSpinning && gameManager.currentGame === 'slots') {
             await this.spin();
         }
         
@@ -196,6 +215,7 @@ const slotsGame = {
     },
     
     async spin() {
+        // Manual spin can always interrupt auto-play
         if (this.isSpinning) return;
         
         if (this.currentBet > gameManager.getBalance()) {
@@ -208,6 +228,7 @@ const slotsGame = {
             return;
         }
         
+        // Manual spin works even with auto-play
         this.isSpinning = true;
         const spinButton = document.getElementById('spin-btn');
         if (spinButton) {

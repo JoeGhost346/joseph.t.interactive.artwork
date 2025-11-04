@@ -15,7 +15,26 @@ const blackjackGame = {
         this.resetGame();
         this.setupBetButtons();
         this.setupGameButtons();
+        this.setupAutoPlayToggle();
         this.startAutoPlay();
+    },
+    
+    setupAutoPlayToggle() {
+        const toggle = document.getElementById('auto-play-toggle-blackjack');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                if (this.autoPlay) {
+                    this.stopAutoPlay();
+                    toggle.textContent = 'Auto-Play: OFF';
+                    toggle.classList.remove('active');
+                } else {
+                    this.startAutoPlay();
+                    toggle.textContent = 'Auto-Play: ON';
+                    toggle.classList.add('active');
+                }
+            });
+            toggle.classList.add('active');
+        }
     },
     
     startAutoPlay() {
@@ -197,6 +216,7 @@ const blackjackGame = {
     },
     
     hit() {
+        // Manual hit can always work
         if (this.gameState !== 'playing') return;
         
         this.playerCards.push(this.drawCard());
@@ -212,6 +232,7 @@ const blackjackGame = {
     },
     
     async stand() {
+        // Manual stand can always work
         if (this.gameState !== 'playing') return;
         
         this.gameState = 'dealer';

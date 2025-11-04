@@ -20,8 +20,27 @@ const unoGame = {
     init() {
         this.setupGame();
         this.setupButtons();
+        this.setupAutoPlayToggle();
         this.updateDisplay();
         this.startAutoPlay();
+    },
+    
+    setupAutoPlayToggle() {
+        const toggle = document.getElementById('auto-play-toggle-uno');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                if (this.autoPlay) {
+                    this.stopAutoPlay();
+                    toggle.textContent = 'Auto-Play: OFF';
+                    toggle.classList.remove('active');
+                } else {
+                    this.startAutoPlay();
+                    toggle.textContent = 'Auto-Play: ON';
+                    toggle.classList.add('active');
+                }
+            });
+            toggle.classList.add('active');
+        }
     },
     
     startAutoPlay() {
@@ -180,6 +199,7 @@ const unoGame = {
     },
     
     playCard(cardIndex) {
+        // Manual play can always work
         if (!this.playerTurn || this.gameState !== 'playing') return;
         
         const card = this.playerHand[cardIndex];
@@ -262,6 +282,7 @@ const unoGame = {
     },
     
     drawCard() {
+        // Manual draw can always work
         if (!this.playerTurn || this.gameState !== 'playing') return;
         
         if (this.drawPile.length === 0) {

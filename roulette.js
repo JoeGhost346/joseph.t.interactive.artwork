@@ -27,7 +27,26 @@ const rouletteGame = {
         this.setupBetButtons();
         this.setupBetOptions();
         this.setupSpinButton();
+        this.setupAutoPlayToggle();
         this.startAutoPlay();
+    },
+    
+    setupAutoPlayToggle() {
+        const toggle = document.getElementById('auto-play-toggle-roulette');
+        if (toggle) {
+            toggle.addEventListener('click', () => {
+                if (this.autoPlay) {
+                    this.stopAutoPlay();
+                    toggle.textContent = 'Auto-Play: OFF';
+                    toggle.classList.remove('active');
+                } else {
+                    this.startAutoPlay();
+                    toggle.textContent = 'Auto-Play: ON';
+                    toggle.classList.add('active');
+                }
+            });
+            toggle.classList.add('active');
+        }
     },
     
     startAutoPlay() {
@@ -162,6 +181,7 @@ const rouletteGame = {
     },
     
     async spin() {
+        // Manual spin can always work
         if (this.isSpinning) return;
         
         if (!this.selectedBet) {
@@ -174,6 +194,7 @@ const rouletteGame = {
             return;
         }
         
+        // Manual spin works even with auto-play
         this.isSpinning = true;
         const spinButton = document.getElementById('spin-roulette-btn');
         if (spinButton) {
